@@ -13,7 +13,7 @@ class ActiveRecord
 
     private Database $db;
 
-    private function init()
+    private function init(): void
     {
 
 
@@ -65,7 +65,7 @@ class ActiveRecord
         $this->findById($id);
     }
 
-    public function findById($id = 0)
+    public function findById($id = 0): void
     {
 
         if (intval($id) > 0) {

@@ -3,11 +3,10 @@
 final class NodeMapper
 {
     private int $id = 0;
-
     private int $parent_id = 0;
     private string $name = "";
     private int $hidden = 0;
-
+    private string $userUid = "";
     private ActiveRecord $dataModel;
 
     public function __construct($id = 0)
@@ -21,7 +20,9 @@ final class NodeMapper
         $c->id = $this->id;
         $c->name = $this->name;
         $c->parent_id = $this->parent_id;
-        $c->hidden = $this->hidden == "true" ? 1 : 0;;
+        $c->user_uid = $this->userUid;
+        $c->hidden = $this->hidden == "true" ? 1 : 0;
+
         return $this->dataModel->save();
     }
 
@@ -40,6 +41,11 @@ final class NodeMapper
         $this->hidden = $hidden == "true" ? 1 : 0;
     }
 
+    public function setUserUid($user_uid = ""): void
+    {
+        $this->userUid = $user_uid;
+    }
+
     public function setParentId($parent_id): void
     {
         if ($parent_id == "root") $parent_id = 0;
@@ -54,6 +60,7 @@ final class NodeMapper
         $o->setParentId($data->parent_id);
         $o->setName($data->name);
         $o->setHidden($data->hidden);
+        $o->setUserUid(Auth::getInstance()->getUserUID());
         return $o;
     }
 }

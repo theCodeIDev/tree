@@ -2,7 +2,7 @@
 
 class TreeController extends Controller
 {
-    public static function saveNode($p)
+    public static function saveNode($p): void
     {
         $id = NodeMapper::toModel($p->data)->save();
         if ($id > 0) {
@@ -12,7 +12,7 @@ class TreeController extends Controller
         }
     }
 
-    public static function loadTree()
+    public static function loadTree(): void
     {
 
         $t = new TreeData();
@@ -25,7 +25,7 @@ class TreeController extends Controller
 
     }
 
-    public static function deleteNodes($p)
+    public static function deleteNodes($p): void
     {
 
         $q = DeleteNodesCommand::execute($p->parent_id);

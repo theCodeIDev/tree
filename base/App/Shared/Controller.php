@@ -2,7 +2,7 @@
 
 class Controller
 {
-    public static function index($p)
+    public static function index($p):void
     {
         $controller = get_called_class();
 

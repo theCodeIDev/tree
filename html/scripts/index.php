@@ -22,7 +22,6 @@ try {
         $m = $data->m;
     } else {
         die("{m: not defined ,p:{...}}");
-        die;
     }
 
     if (isset($data->p)) {

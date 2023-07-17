@@ -4,13 +4,14 @@ final class TreeData
 {
 
     private Database $db;
-
     private array $rawData = [];
+    private string $user_uid = "";
 
     public function __construct()
     {
         $this->db = new Database();
         $this->getAllData();
+        $this->user_uid = Auth::getInstance()->getUserUID();
     }
 
     public function get(): array
@@ -18,7 +19,7 @@ final class TreeData
         return $this->renderTree($this->rawData, 0);
     }
 
-    public function getMaxId()
+    public function getMaxId(): int
     {
         $ids = array_column($this->rawData, 'id');
         $intIds = array_map('intval', $ids);
@@ -33,7 +34,10 @@ final class TreeData
 
     private function getAllData(): void
     {
-        $this->rawData = $this->db->select("SELECT * FROM nodes");
+        $this->rawData = $this->db
+            ->prepare("SELECT * FROM nodes WHERE user_uid = :user_uid")
+            ->bind("user_uid", $this->user_uid)
+            ->execute_all();
     }
 
 
@@ -62,7 +66,7 @@ final class TreeData
         return $result;
     }
 
-    public function getChildren(int $parentId)
+    public function getChildren(int $parentId): array
     {
         return $this->getChildrenIds($this->rawData, $parentId);
     }

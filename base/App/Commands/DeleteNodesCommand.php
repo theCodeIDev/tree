@@ -5,14 +5,16 @@ class DeleteNodesCommand
 
     private Database $db;
     private TreeData $treeData;
+    private string $user_uid;
 
     public function __construct()
     {
         $this->db = new Database();
         $this->treeData = new TreeData();
+        $this->user_uid = Auth::getInstance()->getUserUID();
     }
 
-    private function delete(array $childrenIds)
+    private function delete(array $childrenIds): bool
     {
         $success = true;
 
@@ -20,7 +22,11 @@ class DeleteNodesCommand
             //BEGIN transaction
             $this->db->beginTransaction();
             foreach ($childrenIds as $item) {
-                $this->db->prepare("DELETE FROM nodes WHERE id = :id")->bind("id", $item)->execute();
+                $this->db
+                    ->prepare("DELETE FROM nodes WHERE id = :id AND user_uid = :user_uid")
+                    ->bind("user_uid", $this->user_uid)
+                    ->bind("id", $item)
+                    ->execute();
             }
         } catch (Exception $e) {
             $success = false;
@@ -39,13 +45,28 @@ class DeleteNodesCommand
     }
 
 
-    public static function execute($parent_id)
+    private function deleteAll(): bool
     {
 
-        if ($parent_id == "root") $parent_id = 0;
-        $parent_id = (int)$parent_id;
+        $this->db
+            ->prepare("DELETE FROM nodes WHERE user_uid = :user_uid")
+            ->bind("user_uid", $this->user_uid)
+            ->execute();
+
+        return true;
+    }
+
+
+    public static function execute($parent_id): bool
+    {
 
         $o = new self();
+
+        if ($parent_id == "root") {
+            return $o->deleteAll();
+        }
+
+        $parent_id = (int)$parent_id;
         $childrenIds = $o->treeData->getChildren($parent_id);
         $childrenIds[] = $parent_id;
 
