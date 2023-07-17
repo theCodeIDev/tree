@@ -1,4 +1,4 @@
-## Project "Tree Viewer"
+## Project "Tree Example"
 
 The "Tree Example" project is an application that visualizes arbitrary "trees" of text nodes and provides users with the ability to add new nodes (roots) and remove existing ones.
 
